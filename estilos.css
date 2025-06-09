@@ -24,9 +24,8 @@ body {
     margin: 0;
     padding: 20px;
     color: var(--text);
-    background: #101a2b; /* azul oscuro */
+    background: #101a2b;
     background-image: none;
-    /* Elimina imagen y gradientes, solo azul oscuro */
     position: relative;
 }
 body::before {
