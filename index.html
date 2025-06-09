@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Matrices</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Matrices</h1>
+        
+        <div id="error-messages"></div>
+        
+        <div class="matrices-section">
+            <div class="matrix-container">
+                <h3 class="matrix-title">Matriz A</h3>
+                <div class="matrix-controls">
+                    <select id="size-a"> 
+                        <option value="2">2×2</option>
+                        <option value="3">3×3</option>
+                        <option value="4">4×4</option>
+                        <option value="5">5×5</option>
+                        <option value="6">6×6</option>
+                        <option value="7">7×7</option>
+                        <option value="8">8×8</option>
+                        <option value="9">9×9</option>
+                        <option value="10">10×10</option>
+                    </select>
+                    <button id="random-a">Aleatorio</button>
+                    <button id="clear-a">Limpiar</button>
+                    <button id="identity-a">Identidad</button>
+                </div>
+                <div class="matrix-grid" id="matrix-a"></div>
+            </div> 
+            <div class="matrix-container">
+                <h3 class="matrix-title">Matriz B</h3>
+                <div class="matrix-controls">
+                    <select id="size-b">
+                        <option value="2">2×2</option>
+                        <option value="3">3×3</option>
+                        <option value="4">4×4</option>
+                        <option value="5">5×5</option>
+                        <option value="6">6×6</option>
+                        <option value="7">7×7</option>
+                        <option value="8">8×8</option>
+                        <option value="9">9×9</option>
+                        <option value="10">10×10</option>
+                    </select>
+                    <button id="random-b">Aleatorio</button>
+                    <button id="clear-b">Limpiar</button>
+                    <button id="identity-b">Identidad</button>
+                </div>
+                <div class="matrix-grid" id="matrix-b"></div>
+            </div>
+        </div>
+        
+        <div class="operations-section">
+            <div class="operation-selector">
+                <button class="operation-btn" data-operation="add">A + B</button>
+                <button class="operation-btn" data-operation="subtract">A - B</button>
+                <button class="operation-btn" data-operation="subtract-b">B - A</button>
+                <button class="operation-btn" data-operation="multiply">A × B</button>
+                <button class="operation-btn" data-operation="scalar-a">k × A</button>
+                <button class="operation-btn" data-operation="scalar-b">k × B</button>
+                <button class="operation-btn" data-operation="transpose-a">A<sup>T</sup></button>
+                <button class="operation-btn" data-operation="transpose-b">B<sup>T</sup></button>
+                <button class="operation-btn" data-operation="determinant-a">det(A)</button>
+                <button class="operation-btn" data-operation="determinant-b">det(B)</button>
+                <button class="operation-btn" data-operation="inverse-a">A<sup>-1</sup></button>
+                <button class="operation-btn" data-operation="inverse-b">B<sup>-1</sup></button>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <h3 class="result-title">Resultado</h3>
+            <div id="result-matrix"></div>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
