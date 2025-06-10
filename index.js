@@ -22,7 +22,55 @@ document.addEventListener('DOMContentLoaded', function() {
             handleOperation(operation);
         });
     });
+
+    document.getElementById('example').addEventListener('click', function() {
+        const size = Math.floor(Math.random() * 9) + 2; // 2 a 10
+        document.getElementById('size-a').value = size;
+        updateMatrixSize('matrix-a', size);
+        fillRandom('matrix-a');
+    });
+
+    document.getElementById('example-b').addEventListener('click', function() {
+        const size = Math.floor(Math.random() * 9) + 2; // 2 a 10
+        document.getElementById('size-b').value = size;
+        updateMatrixSize('matrix-b', size);
+        fillRandom('matrix-b');
+    });
 });
+
+function generateExampleMatrix(size) {
+    let matrix = [];
+    let val = 1;
+    for (let i = 0; i < size; i++) {
+        let row = [];
+        for (let j = 0; j < size; j++) {
+            row.push(val++);
+        }
+        matrix.push(row);
+    }
+    return matrix;
+}
+
+function setExampleMatrix(matrixId, sizeSelectorId, size) {
+    document.getElementById(sizeSelectorId).value = size;
+    updateMatrixSize(matrixId, size);
+    const example = generateExampleMatrix(size);
+    fillMatrixInputs(matrixId, example);
+}
+
+function fillMatrixInputs(matrixId, values) {
+    const container = document.getElementById(matrixId);
+    const size = values.length;
+    container.style.setProperty('--size', size);
+    const inputs = container.querySelectorAll('.matrix-cell');
+    let idx = 0;
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            const input = container.querySelector(`.matrix-cell[data-row="${i}"][data-col="${j}"]`);
+            if (input) input.value = values[i][j];
+        }
+    }
+}
 
 function initMatrixInputs(matrixId, sizeSelectorId) {
     const size = document.getElementById(sizeSelectorId).value;
