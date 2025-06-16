@@ -3,14 +3,14 @@
     --primary-dark: #3a3a6a;
     --secondary: #8f5cff;
     --background: #18192a;
-    --container-bg: #f0f3ff; /* Más claro */
-    --matrix-bg: #e6eaff;      /* Más claro */
-    --matrix-cell-bg: #f5f7ff; /* Más claro */
+    --container-bg: #f0f3ff;
+    --matrix-bg: #e6eaff;
+    --matrix-cell-bg: #f5f7ff;
     --matrix-cell-border: #4a4a7a;
     --error: #ff4757;
     --success: #2ed573;
     --text: #e0e6f7;
-    --number: #23234a;         /* Texto oscuro para contraste */
+    --number: #23234a;
     --gradient-bg: linear-gradient(135deg, #23234a 0%, #6c63ff 100%);
     --gradient-matrix: linear-gradient(135deg, #282a4d 0%, #8f5cff 100%);
 }
@@ -24,7 +24,7 @@ body {
     margin: 0;
     padding: 20px;
     color: var(--text);
-    background: #e6eaff; /* Fondo más claro */
+    background: #e6eaff;
     background-image: none;
     position: relative;
 }
@@ -32,7 +32,7 @@ body::before {
     content: "";
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(230,234,255,0.5); /* Más claro */
+    background: rgba(230,234,255,0.5);
     pointer-events: none;
     z-index: 0;
 }
@@ -69,15 +69,14 @@ h1 {
 
 .matrices-section {
     display: flex;
-    flex-wrap: nowrap; /* Cambia a nowrap para que nunca se apilen */
+    flex-wrap: nowrap;
     gap: 30px;
-    justify-content: flex-start;
+    justify-content: center;
     margin-bottom: 30px;
     align-items: flex-start;
     overflow-x: auto;
     min-width: 0;
     width: 100%;
-    /* Permite scroll horizontal si las matrices son muy grandes */
 }
 
 .matrix-container {
@@ -87,9 +86,9 @@ h1 {
     box-shadow: 0 2px 12px rgba(40,40,80,0.25);
     background: var(--gradient-matrix);
     background: rgba(44, 51, 120, 0.75);
-    flex: 0 0 auto; /* No se encogen, no crecen, ancho automático */
-    min-width: max-content; /* El ancho mínimo es el contenido */
-    max-width: none; /* Sin límite de ancho */
+    flex: 0 0 auto;
+    min-width: max-content;
+    max-width: none;
     overflow-x: auto;
 }
 
@@ -113,16 +112,24 @@ select {
     padding: 8px 12px;
     border: 1px solid #3a3a6a;
     border-radius: 4px;
-    background: rgba(255,255,255,0.18);
-    color: #fff;
+    background: #fff;
+    color: #23234a;
     font-weight: bold;
     box-shadow: 0 1px 8px rgba(140,100,255,0.08);
     transition: background 0.3s, color 0.3s;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 select:focus {
     outline: 2px solid var(--secondary);
-    background: rgba(255,255,255,0.28);
-    color: #fff;
+    background: #f5f7ff;
+    color: #23234a;
+}
+select option {
+    background: #fff;
+    color: #23234a;
+    font-weight: bold;
 }
 
 button {
@@ -138,34 +145,43 @@ button:hover {
 
 .matrix-grid {
     display: grid;
-    grid-template-columns: repeat(var(--size, 5), minmax(48px, auto)); /* Cambia 1fr por auto */
+    grid-template-columns: repeat(var(--size, 5), minmax(48px, auto));
     gap: 5px;
     overflow-x: auto;
     min-width: 0;
     max-width: 100%;
 }
 
-.matrix-cell {
-    width: auto;              /* Permite que la celda crezca según el contenido */
-    min-width: 48px;          /* Mínimo 48px */
+.matrix-cell,
+.matrix-cell-btn {
+    display: inline-block;
+    width: auto;
+    min-width: 48px;
     max-width: 100%;
     height: 44px;
     text-align: center;
     border: 1.5px solid var(--matrix-cell-border);
     border-radius: 4px;
-    padding: 5px 8px;
+    padding: 8px 18px;
     background: var(--matrix-cell-bg);
     color: var(--number);
-    font-size: 1.05em;
+    font-size: 1em;
     font-weight: 600;
     outline: none;
     transition: border 0.2s, background 0.2s;
     box-shadow: 0 1px 6px rgba(140,100,255,0.08);
     overflow-x: auto;
     white-space: nowrap;
-    /* Para que el texto largo haga scroll dentro de la celda */
+    margin: 0;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    border-style: solid;
+    border-width: 1.5px;
 }
-.matrix-cell:focus {
+
+.matrix-cell:focus,
+.matrix-cell-btn:focus {
     border: 2px solid var(--secondary);
     background: #fffbe6;
 }
@@ -174,9 +190,31 @@ button:hover {
 .matrix-cell:-ms-input-placeholder { color: #b0b0b0; }
 .matrix-cell::placeholder { color: #b0b0b0; opacity: 1; }
 
-/* Reduce el tamaño de fuente si el número es muy largo */
-.matrix-cell:focus, .matrix-cell.long-value {
-    font-size: 0.85em;
+.matrix-cell-btn {
+    background: var(--matrix-cell-bg);
+    border: 1.5px solid var(--matrix-cell-border);
+    color: var(--number);
+    font-size: 1em;
+    font-weight: 600;
+    box-shadow: 0 1px 6px rgba(140,100,255,0.08);
+    outline: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    transition: border 0.2s, background 0.2s;
+    user-select: text;
+}
+
+.matrix-cell-btn:active,
+.matrix-cell-btn:focus {
+    border: 2px solid var(--secondary);
+    background: #fffbe6;
+}
+
+.matrix-cell-btn[disabled] {
+    opacity: 1;
+    cursor: default;
 }
 
 .operations-section {
@@ -244,7 +282,6 @@ button:hover {
 .matrix-result table {
     margin: auto;
     border-collapse: collapse;
-    /* Elimina el min-width y width para que la tabla no se estire como Excel */
     width: auto;
     min-width: unset;
     table-layout: auto;
@@ -260,7 +297,6 @@ button:hover {
     max-width: 120px;
     overflow-x: auto;
     white-space: nowrap;
-    /* Para que el texto largo haga scroll dentro de la celda */
 }
 
 .alert {

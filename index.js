@@ -69,29 +69,14 @@ function fillMatrixInputs(matrixId, values) {
     container.style.setProperty('--size', size);
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
-            const input = container.querySelector(`.matrix-cell[data-row="${i}"][data-col="${j}"]`);
-            if (input) {
-                input.value = values[i][j];
-                autoResizeInput(input);
-                // Ajusta clase para valores largos
+            const btn = container.querySelector(`.matrix-cell-btn[data-row="${i}"][data-col="${j}"]`);
+            if (btn) {
+                btn.textContent = values[i][j];
                 if (String(values[i][j]).length > 8) {
-                    input.classList.add('long-value');
+                    btn.classList.add('long-value');
                 } else {
-                    input.classList.remove('long-value');
+                    btn.classList.remove('long-value');
                 }
-                input.addEventListener('input', () => {
-                    autoResizeInput(input);
-                    if (input.value.length > 8) {
-                        input.classList.add('long-value');
-                    } else {
-                        input.classList.remove('long-value');
-                    }
-                    if (lastOperation) {
-                        handleOperation(lastOperation, true);
-                    } else {
-                        document.getElementById('result-matrix').innerHTML = '';
-                    }
-                });
             }
         }
     }
@@ -111,57 +96,56 @@ function updateMatrixSize(matrixId, size) {
 
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.className = 'matrix-cell';
-            input.dataset.row = i;
-            input.dataset.col = j;
-            input.placeholder = '0';
-            input.value = '';
-            input.addEventListener('input', () => {
-                autoResizeInput(input);
-                // Ajusta clase para valores largos
-                if (input.value.length > 8) {
-                    input.classList.add('long-value');
-                } else {
-                    input.classList.remove('long-value');
-                }
-                // Actualiza resultado automáticamente si hay una operación previa
-                if (lastOperation) {
-                    handleOperation(lastOperation, true);
-                } else {
-                    document.getElementById('result-matrix').innerHTML = '';
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'matrix-cell-btn';
+            btn.dataset.row = i;
+            btn.dataset.col = j;
+            btn.textContent = '0';
+            btn.addEventListener('click', () => {
+                const current = btn.textContent;
+                const value = prompt("Ingrese el valor:", current);
+                if (value !== null && value !== "") {
+                    btn.textContent = value;
+                    if (btn.textContent.length > 8) {
+                        btn.classList.add('long-value');
+                    } else {
+                        btn.classList.remove('long-value');
+                    }
+                    if (lastOperation) {
+                        handleOperation(lastOperation, true);
+                    } else {
+                        document.getElementById('result-matrix').innerHTML = '';
+                    }
                 }
             });
-            // Inicializa el ancho
-            autoResizeInput(input);
-            container.appendChild(input);
+            container.appendChild(btn);
         }
     }
 }
 
 function fillRandom(matrixId) {
-    const inputs = document.querySelectorAll(`#${matrixId} .matrix-cell`);
+    const inputs = document.querySelectorAll(`#${matrixId} .matrix-cell-btn`);
     inputs.forEach(input => {
-        input.value = Math.floor(Math.random() * 21) - 10;
+        input.textContent = Math.floor(Math.random() * 21) - 10;
     });
 }
 
 function fillIdentity(matrixId) {
     const container = document.getElementById(matrixId);
     const size = parseInt(container.style.getPropertyValue('--size'));
-    const inputs = container.querySelectorAll('.matrix-cell');
+    const inputs = container.querySelectorAll('.matrix-cell-btn');
     inputs.forEach(input => {
         const row = parseInt(input.dataset.row);
         const col = parseInt(input.dataset.col);
-        input.value = row === col ? '1' : '0';
+        input.textContent = row === col ? '1' : '0';
     });
 }
 
 function clearMatrix(matrixId) {
-    const inputs = document.querySelectorAll(`#${matrixId} .matrix-cell`);
+    const inputs = document.querySelectorAll(`#${matrixId} .matrix-cell-btn`);
     inputs.forEach(input => {
-        input.value = '';
+        input.textContent = '';
     });
 }
 
@@ -195,8 +179,8 @@ function getMatrixValues(matrixId) {
     for (let i = 0; i < size; i++) {
         const row = [];
         for (let j = 0; j < size; j++) {
-            const input = container.querySelector(`.matrix-cell[data-row="${i}"][data-col="${j}"]`);
-            const value = parseFloat(input.value);
+            const btn = container.querySelector(`.matrix-cell-btn[data-row="${i}"][data-col="${j}"]`);
+            const value = parseFloat(btn.textContent);
             if (isNaN(value)) {
                 throw new Error(`Valor inválido en ${matrixId}, fila ${i+1}, columna ${j+1}`);
             }
