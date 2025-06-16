@@ -67,12 +67,30 @@ function fillMatrixInputs(matrixId, values) {
     const container = document.getElementById(matrixId);
     const size = values.length;
     container.style.setProperty('--size', size);
-    const inputs = container.querySelectorAll('.matrix-cell');
-    let idx = 0;
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
             const input = container.querySelector(`.matrix-cell[data-row="${i}"][data-col="${j}"]`);
-            if (input) input.value = values[i][j];
+            if (input) {
+                input.value = values[i][j];
+                // Ajusta clase para valores largos
+                if (String(values[i][j]).length > 8) {
+                    input.classList.add('long-value');
+                } else {
+                    input.classList.remove('long-value');
+                }
+                input.addEventListener('input', () => {
+                    if (input.value.length > 8) {
+                        input.classList.add('long-value');
+                    } else {
+                        input.classList.remove('long-value');
+                    }
+                    if (lastOperation) {
+                        handleOperation(lastOperation, true);
+                    } else {
+                        document.getElementById('result-matrix').innerHTML = '';
+                    }
+                });
+            }
         }
     }
 }
@@ -81,6 +99,8 @@ function initMatrixInputs(matrixId, sizeSelectorId) {
     const size = document.getElementById(sizeSelectorId).value;
     updateMatrixSize(matrixId, size);
 }
+
+let lastOperation = null;
 
 function updateMatrixSize(matrixId, size) {
     const container = document.getElementById(matrixId);
@@ -96,6 +116,20 @@ function updateMatrixSize(matrixId, size) {
             input.dataset.col = j;
             input.placeholder = '0';
             input.value = '';
+            input.addEventListener('input', () => {
+                // Ajusta clase para valores largos
+                if (input.value.length > 8) {
+                    input.classList.add('long-value');
+                } else {
+                    input.classList.remove('long-value');
+                }
+                // Actualiza resultado automáticamente si hay una operación previa
+                if (lastOperation) {
+                    handleOperation(lastOperation, true);
+                } else {
+                    document.getElementById('result-matrix').innerHTML = '';
+                }
+            });
             container.appendChild(input);
         }
     }
@@ -262,7 +296,7 @@ const matrixOperations = {
     }
 };
 
-function handleOperation(operation) {
+function handleOperation(operation, isAuto = false) {
     const operationsMap = {
         add: () => {
             const result = matrixOperations.add(getMatrixValues('matrix-a'), getMatrixValues('matrix-b'));
@@ -281,11 +315,13 @@ function handleOperation(operation) {
             return { result, title: 'A × B =' };
         },
         'scalar-a': () => {
+            if (isAuto) return null; // No repite operación escalar automáticamente
             const scalarA = getScalarValue();
             const result = matrixOperations.scalarMultiply(getMatrixValues('matrix-a'), scalarA);
             return { result, title: `k × A (k = ${scalarA}) =` };
         },
         'scalar-b': () => {
+            if (isAuto) return null;
             const scalarB = getScalarValue();
             const result = matrixOperations.scalarMultiply(getMatrixValues('matrix-b'), scalarB);
             return { result, title: `k × B (k = ${scalarB}) =` };
@@ -301,13 +337,13 @@ function handleOperation(operation) {
         'determinant-a': () => {
             const detA = matrixOperations.determinant(getMatrixValues('matrix-a'));
             displayResult([[detA]], `det(A) = ${Number(detA).toFixed(4)}`);
-            showMessage('Operación realizada con éxito', 'success');
+            if (!isAuto) showMessage('Operación realizada con éxito', 'success');
             return null;
         },
         'determinant-b': () => {
             const detB = matrixOperations.determinant(getMatrixValues('matrix-b'));
             displayResult([[detB]], `det(B) = ${Number(detB).toFixed(4)}`);
-            showMessage('Operación realizada con éxito', 'success');
+            if (!isAuto) showMessage('Operación realizada con éxito', 'success');
             return null;
         },
         'inverse-a': () => {
@@ -341,9 +377,10 @@ function handleOperation(operation) {
             throw new Error('Operación no soportada');
         }
         const opResult = operationsMap[operation]();
+        if (!isAuto) lastOperation = operation;
         if (opResult) {
             displayResult(opResult.result, opResult.title);
-            showMessage('Operación realizada con éxito', 'success');
+            if (!isAuto) showMessage('Operación realizada con éxito', 'success');
         }
     } catch (error) {
         showMessage(error.message);
