@@ -72,6 +72,7 @@ function fillMatrixInputs(matrixId, values) {
             const input = container.querySelector(`.matrix-cell[data-row="${i}"][data-col="${j}"]`);
             if (input) {
                 input.value = values[i][j];
+                autoResizeInput(input);
                 // Ajusta clase para valores largos
                 if (String(values[i][j]).length > 8) {
                     input.classList.add('long-value');
@@ -79,6 +80,7 @@ function fillMatrixInputs(matrixId, values) {
                     input.classList.remove('long-value');
                 }
                 input.addEventListener('input', () => {
+                    autoResizeInput(input);
                     if (input.value.length > 8) {
                         input.classList.add('long-value');
                     } else {
@@ -117,6 +119,7 @@ function updateMatrixSize(matrixId, size) {
             input.placeholder = '0';
             input.value = '';
             input.addEventListener('input', () => {
+                autoResizeInput(input);
                 // Ajusta clase para valores largos
                 if (input.value.length > 8) {
                     input.classList.add('long-value');
@@ -130,6 +133,8 @@ function updateMatrixSize(matrixId, size) {
                     document.getElementById('result-matrix').innerHTML = '';
                 }
             });
+            // Inicializa el ancho
+            autoResizeInput(input);
             container.appendChild(input);
         }
     }
@@ -386,4 +391,20 @@ function handleOperation(operation, isAuto = false) {
         showMessage(error.message);
         console.error(error);
     }
+}
+
+function autoResizeInput(input) {
+    // Crea un span oculto para medir el ancho del texto
+    let span = input._widthSpan;
+    if (!span) {
+        span = document.createElement('span');
+        span.style.visibility = 'hidden';
+        span.style.position = 'absolute';
+        span.style.whiteSpace = 'pre';
+        span.style.font = window.getComputedStyle(input).font;
+        document.body.appendChild(span);
+        input._widthSpan = span;
+    }
+    span.textContent = input.value || input.placeholder || '';
+    input.style.width = Math.max(48, span.offsetWidth + 20) + 'px';
 }
