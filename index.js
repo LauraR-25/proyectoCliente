@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializa las matrices A y B con el tamaño seleccionado
     initMatrixInputs('matrix-a', 'size-a');
     initMatrixInputs('matrix-b', 'size-b');
 
+    // Asigna eventos a los botones de matriz A
     document.getElementById('random-a').addEventListener('click', () => fillRandom('matrix-a'));
     document.getElementById('clear-a').addEventListener('click', () => clearMatrix('matrix-a'));
     document.getElementById('identity-a').addEventListener('click', () => fillIdentity('matrix-a'));
@@ -9,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateMatrixSize('matrix-a', this.value);
     });
 
+    // Igual para matriz B
     document.getElementById('random-b').addEventListener('click', () => fillRandom('matrix-b'));
     document.getElementById('clear-b').addEventListener('click', () => clearMatrix('matrix-b'));
     document.getElementById('identity-b').addEventListener('click', () => fillIdentity('matrix-b'));
@@ -16,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateMatrixSize('matrix-b', this.value);
     });
 
+    // Botones de operaciones(suma, resta, etc.)
     document.querySelectorAll('.operation-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const operation = this.getAttribute('data-operation');
@@ -23,15 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Botones de ejemplo para llenar matrices con valores aleatorios
     document.getElementById('example').addEventListener('click', function() {
-        const size = Math.floor(Math.random() * 9) + 2; // 2 a 10
+        const size = Math.floor(Math.random() * 9) + 2; 
         document.getElementById('size-a').value = size;
         updateMatrixSize('matrix-a', size);
         fillRandom('matrix-a');
     });
 
     document.getElementById('example-b').addEventListener('click', function() {
-        const size = Math.floor(Math.random() * 9) + 2; // 2 a 10
+        const size = Math.floor(Math.random() * 9) + 2; 
         document.getElementById('size-b').value = size;
         updateMatrixSize('matrix-b', size);
         fillRandom('matrix-b');
@@ -143,6 +148,7 @@ function displayResult(matrix, title = '') {
     resultDiv.innerHTML = html;
 }
 
+// Obtener valores de la matriz
 function getMatrixValues(matrixId) {
     const container = document.getElementById(matrixId);
     const size = parseInt(container.style.getPropertyValue('--size'));
@@ -171,6 +177,7 @@ function getScalarValue() {
     return num;
 }
 
+// Operaciones matematicas
 const matrixOperations = {
     add: (A, B) => {
         if (A.length !== B.length || A[0].length !== B[0].length) {
@@ -256,78 +263,88 @@ const matrixOperations = {
 };
 
 function handleOperation(operation) {
-    try {
-        let result, title = '';
-        switch(operation) {
-            case 'add':
-                result = matrixOperations.add(getMatrixValues('matrix-a'), getMatrixValues('matrix-b'));
-                title = 'A + B =';
-                break;
-            case 'subtract':
-                result = matrixOperations.subtract(getMatrixValues('matrix-a'), getMatrixValues('matrix-b'));
-                title = 'A - B =';
-                break;
-            case 'subtract-b':
-                result = matrixOperations.subtract(getMatrixValues('matrix-b'), getMatrixValues('matrix-a'));
-                title = 'B - A =';
-                break;
-            case 'multiply':
-                result = matrixOperations.multiply(getMatrixValues('matrix-a'), getMatrixValues('matrix-b'));
-                title = 'A × B =';
-                break;
-            case 'scalar-a':
-                const scalarA = getScalarValue();
-                result = matrixOperations.scalarMultiply(getMatrixValues('matrix-a'), scalarA);
-                title = `k × A (k = ${scalarA}) =`;
-                break;
-            case 'scalar-b':
-                const scalarB = getScalarValue();
-                result = matrixOperations.scalarMultiply(getMatrixValues('matrix-b'), scalarB);
-                title = `k × B (k = ${scalarB}) =`;
-                break;
-            case 'transpose-a':
-                result = matrixOperations.transpose(getMatrixValues('matrix-a'));
-                title = 'A<sup>T</sup> =';
-                break;
-            case 'transpose-b':
-                result = matrixOperations.transpose(getMatrixValues('matrix-b'));
-                title = 'B<sup>T</sup> =';
-                break;
-            case 'determinant-a':
-                const detA = matrixOperations.determinant(getMatrixValues('matrix-a'));
-                displayResult([[detA]], `det(A) = ${Number(detA).toFixed(4)}`);
-                showMessage('Operación realizada con éxito', 'success');
-                return;
-            case 'determinant-b':
-                const detB = matrixOperations.determinant(getMatrixValues('matrix-b'));
-                displayResult([[detB]], `det(B) = ${Number(detB).toFixed(4)}`);
-                showMessage('Operación realizada con éxito', 'success');
-                return;
-            case 'inverse-a':
-                result = matrixOperations.inverse(getMatrixValues('matrix-a'));
-                title = 'A<sup>-1</sup> =';
-                const verification = matrixOperations.multiply(
-                    getMatrixValues('matrix-a'), 
-                    result
-                );
-                setTimeout(() => {
-                    displayResult(verification, 'Verificación (A × A⁻¹ ≈ I):');
-                }, 100);
-                break;
-            case 'inverse-b':
-                result = matrixOperations.inverse(getMatrixValues('matrix-b'));
-                title = 'B<sup>-1</sup> =';
-                const verificationB = matrixOperations.multiply(
-                    getMatrixValues('matrix-b'), 
-                    result
-                );
-                setTimeout(() => {
-                    displayResult(verificationB, 'Verificación (B × B⁻¹ ≈ I):');
-                }, 100);
-                break;
+    const operationsMap = {
+        add: () => {
+            const result = matrixOperations.add(getMatrixValues('matrix-a'), getMatrixValues('matrix-b'));
+            return { result, title: 'A + B =' };
+        },
+        subtract: () => {
+            const result = matrixOperations.subtract(getMatrixValues('matrix-a'), getMatrixValues('matrix-b'));
+            return { result, title: 'A - B =' };
+        },
+        'subtract-b': () => {
+            const result = matrixOperations.subtract(getMatrixValues('matrix-b'), getMatrixValues('matrix-a'));
+            return { result, title: 'B - A =' };
+        },
+        multiply: () => {
+            const result = matrixOperations.multiply(getMatrixValues('matrix-a'), getMatrixValues('matrix-b'));
+            return { result, title: 'A × B =' };
+        },
+        'scalar-a': () => {
+            const scalarA = getScalarValue();
+            const result = matrixOperations.scalarMultiply(getMatrixValues('matrix-a'), scalarA);
+            return { result, title: `k × A (k = ${scalarA}) =` };
+        },
+        'scalar-b': () => {
+            const scalarB = getScalarValue();
+            const result = matrixOperations.scalarMultiply(getMatrixValues('matrix-b'), scalarB);
+            return { result, title: `k × B (k = ${scalarB}) =` };
+        },
+        'transpose-a': () => {
+            const result = matrixOperations.transpose(getMatrixValues('matrix-a'));
+            return { result, title: 'A<sup>T</sup> =' };
+        },
+        'transpose-b': () => {
+            const result = matrixOperations.transpose(getMatrixValues('matrix-b'));
+            return { result, title: 'B<sup>T</sup> =' };
+        },
+        'determinant-a': () => {
+            const detA = matrixOperations.determinant(getMatrixValues('matrix-a'));
+            displayResult([[detA]], `det(A) = ${Number(detA).toFixed(4)}`);
+            showMessage('Operación realizada con éxito', 'success');
+            return null;
+        },
+        'determinant-b': () => {
+            const detB = matrixOperations.determinant(getMatrixValues('matrix-b'));
+            displayResult([[detB]], `det(B) = ${Number(detB).toFixed(4)}`);
+            showMessage('Operación realizada con éxito', 'success');
+            return null;
+        },
+        'inverse-a': () => {
+            const result = matrixOperations.inverse(getMatrixValues('matrix-a'));
+            const title = 'A<sup>-1</sup> =';
+            const verification = matrixOperations.multiply(
+                getMatrixValues('matrix-a'), 
+                result
+            );
+            setTimeout(() => {
+                displayResult(verification, 'Verificación (A × A⁻¹ ≈ I):');
+            }, 100);
+            return { result, title };
+        },
+        'inverse-b': () => {
+            const result = matrixOperations.inverse(getMatrixValues('matrix-b'));
+            const title = 'B<sup>-1</sup> =';
+            const verificationB = matrixOperations.multiply(
+                getMatrixValues('matrix-b'), 
+                result
+            );
+            setTimeout(() => {
+                displayResult(verificationB, 'Verificación (B × B⁻¹ ≈ I):');
+            }, 100);
+            return { result, title };
         }
-        displayResult(result, title);
-        showMessage('Operación realizada con éxito', 'success');
+    };
+
+    try {
+        if (!operationsMap[operation]) {
+            throw new Error('Operación no soportada');
+        }
+        const opResult = operationsMap[operation]();
+        if (opResult) {
+            displayResult(opResult.result, opResult.title);
+            showMessage('Operación realizada con éxito', 'success');
+        }
     } catch (error) {
         showMessage(error.message);
         console.error(error);
